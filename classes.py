@@ -31,23 +31,25 @@ class King(Piece):
 
 
 class Square:
+    def color(self):
+        return ("black" if self.clr == 0 else "white")
     def __init__(self,board,x,y,color,piece):
+        self.clr = color
         self.x=x
         self.y=y
-        self.color=color
         self.piece=piece
     def __str__(self):
-        return (self.piece.__class__.__name__)[0:2]
+        return (self.piece.type if self.piece.type != "empty" else self.color())[0:2]
 class Board:
     def __init__(self,w=8,h=8):
         self.board=[]
         self.w=w
         self.h=h
-        class Codes: wPieces,bPieces,wPawn,bPawn,lRook,rRook,lKnight,rKnight,lBishop,rBishop,qu,ki=0,h-1,1,h-2,0,w-1,1,w-2,2,w-3,4,5
+        class Codes: wPieces,bPieces,wPawn,bPawn,lRook,rRook,lKnight,rKnight,lBishop,rBishop,qu,ki=0,h-1,1,h-2,0,w-1,1,w-2,2,w-3,3,4
         for x in range(0,w):
             col = []
             for y in range(0,h):
-                clr = ((x%2)+(y%2))%2
+                clr = (x+y)%2
                 piece = Piece("") 
                 match y:
                     case Codes.wPawn|Codes.bPawn:
@@ -75,7 +77,7 @@ class Board:
         for col in range(0,len(self.board[0]))[::-1]:
             rowStr =""
             for row in range(0,len(self.board)):
-                rowStr += str(self.board[row][col].piece)
+                rowStr += str(self.board[row][col])
             allStr += rowStr + "\n"
         return allStr
 
