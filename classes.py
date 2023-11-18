@@ -1,5 +1,8 @@
+w=8
+h=8
 class Piece:
     def __init__(self,color):
+        self.hasMoved=False
         self.color="empty"
         self.type="empty"
     def __str__(self):
@@ -31,6 +34,20 @@ class King(Piece):
 
 
 class Square:
+    def getMoves(self):
+        moves = []
+        pieceType = self.piece.type
+        match pieceType:
+            case "pawn": moves.append((self.x,self.y+(1 if self.piece.color=="w" else -1)))
+            case "king": moves = [(self.x+i,self.y+n) for i in range(-1,2) for n in range(-1,2)]
+            case "bishop": moves = [(self.x+i,self.y+n) for i in range(-7,8) for n in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8)[::-1] for n in range(-7,8)[::-1]]
+            case "knight": moves = [(self.x+(2*i),self.y+n) for i in range(-1,2) for n in range(-1,2)] + [(self.x+i,self.y+(2*n)) for i in range(-1,2) for n in range(-1,2)]
+            case "rook": moves = [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)]
+            case "queen": moves = [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8) for n in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8)[::-1] for n in range(-7,8)[::-1]]
+            case default: pass
+        return list(set(list(map((lambda move : (min(7, max(move[0],0)), min(7, max(move[1],0)))),moves))))
+        # match pieceType:
+        #     case 
     def color(self):
         return ("black" if self.clr == 0 else "white")
     def __init__(self,board,x,y,color,piece):
@@ -78,6 +95,7 @@ class Board:
             rowStr =""
             for row in range(0,len(self.board)):
                 rowStr += str(self.board[row][col])
+                print(self.board[row][col].getMoves())
             allStr += rowStr + "\n"
         return allStr
 
