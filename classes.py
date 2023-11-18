@@ -46,8 +46,6 @@ class Square:
             case "queen": moves = [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8) for n in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8)[::-1] for n in range(-7,8)[::-1]]
             case default: pass
         return list(set(list(map((lambda move : (min(7, max(move[0],0)), min(7, max(move[1],0)))),moves))))
-        # match pieceType:
-        #     case 
     def color(self):
         return ("black" if self.clr == 0 else "white")
     def __init__(self,board,x,y,color,piece):
