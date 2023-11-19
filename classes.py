@@ -1,36 +1,39 @@
 w=8
 h=8
 class Piece:
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        self.square = square
         self.hasMoved=False
         self.color="empty"
         self.type="empty"
     def __str__(self):
         return self.type[0:1]+self.color[0:1]
+    # def isMoveLegal(x,y):
 class Pawn(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="pawn"
-        self.color=color
 class Knight(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="knight"
-        self.color=color
 class Rook(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="rook"
-        self.color = color
+
 class Bishop(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="bishop"
-        self.color = color
 class Queen(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="queen"
-        self.color = color
 class King(Piece):
-    def __init__(self,color):
+    def __init__(self,color,square=None):
+        super().__init__(color,square)
         self.type="king"
-        self.color=color
 
 
 class Square:
@@ -48,6 +51,8 @@ class Square:
         return list(set(list(map((lambda move : (min(7, max(move[0],0)), min(7, max(move[1],0)))),moves))))
     def color(self):
         return ("black" if self.clr == 0 else "white")
+    def setPiece(self,piece):
+        self.piece = piece
     def __init__(self,board,x,y,color,piece):
         self.clr = color
         self.x=x
@@ -66,26 +71,28 @@ class Board:
             for y in range(0,h):
                 clr = (x+y)%2
                 piece = Piece("") 
+                sq = Square(self,x,y,clr,piece)
                 match y:
                     case Codes.wPawn|Codes.bPawn:
-                        piece=Pawn("w" if y==Codes.wPawn else "b")
+                        piece=Pawn("w" if y==Codes.wPawn else "b",sq)
                     case Codes.wPieces|Codes.bPieces:
                         match x:
                             case Codes.lRook|Codes.rRook:
-                                piece=Rook("w" if y ==Codes.wPieces else "b")
+                                piece=Rook("w" if y ==Codes.wPieces else "b",sq)
                             case Codes.lKnight|Codes.rKnight:
-                                piece=Knight("w" if y == Codes.wPieces else "b")
+                                piece=Knight("w" if y == Codes.wPieces else "b",sq)
                             case Codes.lBishop|Codes.rBishop:
-                                piece=Bishop("w" if y == Codes.wPieces else "b")
+                                piece=Bishop("w" if y == Codes.wPieces else "b",sq)
                             case Codes.qu:
-                                piece=Queen("w" if y == Codes.wPieces else "b")
+                                piece=Queen("w" if y == Codes.wPieces else "b",sq)
                             case Codes.ki:
-                                piece=King("w" if y == Codes.wPieces else "b")
+                                piece=King("w" if y == Codes.wPieces else "b",sq)
                             case default:
                                 pass
                     case default:
                         pass
-                col.append(Square(self,x,y,clr,piece))
+                sq.setPiece(piece)
+                col.append(sq)
             self.board.append(col)
     def __str__(self):
         allStr = ""
@@ -96,5 +103,19 @@ class Board:
                 print(self.board[row][col].getMoves())
             allStr += rowStr + "\n"
         return allStr
+    def displayRowMajor(self):
+        out="each square is displayed as i,n representing board[i][n]\n"
+        for i in range(0,len(self.board)):
+            r=""
+            for n in range(0,len(self.board[i])):
+                r+=str(i)+str(n)
+            out+=r+'\n'
+        out+="\n\n"
+        for i in self.board:
+            r=""
+            for n in i:
+                r+=str(n)
+            out+=r+'\n'
+        return out
 
-print(Board())
+print(Board().displayRowMajor())
