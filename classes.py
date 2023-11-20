@@ -3,6 +3,7 @@ w=8
 h=8
 class Piece:
     def __init__(self,color="empty",square=None):
+        self.char = ""
         self.square = square
         self.hasMoved=False
         self.color=color
@@ -25,28 +26,40 @@ class Piece:
 
 class Pawn(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char = "o"
         self.type="pawn"
 class Knight(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char = "j"
         self.type="knight"
 class Rook(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char="t"
         self.type="rook"
 
 class Bishop(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char = "n"
         self.type="bishop"
 class Queen(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char = "w"
         self.type="queen"
 class King(Piece):
     def __init__(self,color,square=None):
+        
         super().__init__(color,square)
+        self.char = "l"
         self.type="king"
 
 
@@ -54,17 +67,22 @@ class Square:
     def getMoves(self):
         moves = []
         pieceType = self.piece.type
-        match pieceType: #these arent working lol, I think the rook one does though at least
-            case "pawn": moves.append((self.x,self.y+(1 if self.piece.color=="w" else -1)))
+        match pieceType: #working i think?
+            case "pawn": #missing en passant
+                moves.append((self.x,self.y+(1 if self.piece.color=="w" else -1)))
+                if self.piece.hasMoved == False: moves.append((self.x,self.y+(2 if self.piece.color=="w" else -2)))
             case "king": moves = [(self.x+i,self.y+n) for i in range(-1,2) for n in range(-1,2)]
-            case "bishop": moves = [(self.x+i,self.y+n) for i in range(-7,8) for n in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8)[::-1] for n in range(-7,8)[::-1]]
-            case "knight": moves = [(self.x+(2*i),self.y+n) for i in range(-1,2) for n in range(-1,2)] + [(self.x+i,self.y+(2*n)) for i in range(-1,2) for n in range(-1,2)]
+            case "bishop": moves = [(self.x+i,self.y+i) for i in range(-7,8)] + [(self.x-i,self.y+i) for i in range(-7,8)]
+            case "knight": moves = [(self.x + i+i, self.y + i) for i in range(-1,2)] + [(self.x+i, self.y + i +i) for i in range(-1,2)] + [(self.x+i+i,self.y-i) for i in range(-1,2)] + [(self.x+i,self.y-i-i) for i in range(-1,2)]
             case "rook": moves = [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)]
-            case "queen": moves = [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8) for n in range(-7,8)] + [(self.x+i,self.y+n) for i in range(-7,8)[::-1] for n in range(-7,8)[::-1]]
+            case "queen": moves =  [(self.x+i,self.y+i) for i in range(-7,8)] + [(self.x-i,self.y+i) for i in range(-7,8)] + [(self.x+i,self.y) for i in range(-7,8)] + [(self.x,self.y+i) for i in range(-7,8)]
             case default: pass
-        return list(set(list(map((lambda move : (min(7, max(move[0],0)), min(7, max(move[1],0)))),moves))))
+        moves = filter((lambda move : not (move[0] >= w or move[1] >= h or move[0] < 0 or move[1] < 0)),moves)
+        # print(list(moves))
+        return list(moves)
+        
     def color(self):
-        return ("white" if self.clr == 0 else "black")
+        return ("forestgreen" if self.clr == 1 else "tan")
     def setPiece(self,piece):
         self.piece = piece
     def __init__(self,board,x,y,color,piece):
@@ -84,7 +102,7 @@ class Board:
         for x in range(0,w):
             col = []
             for y in range(0,h):
-                clr = (x+y)%2
+                clr = ((x+y)%2)+1
                 piece = Piece("") 
                 sq = Square(self,x,y,clr,piece)
                 match y:
