@@ -10,18 +10,26 @@ class Piece:
         self.type="empty"
     def __str__(self):
         return self.type[0:1]+self.color[0:1]
+    def isEmpty(self):
+        return self.type == "empty"
     def isMoveLegal(self,x,y):
             if self.square is not None:
                 moves = self.square.getMoves()
             else: 
                 moves=[]
+            friendly = self.color
+            # ratios = []
             # for move in moves:
+            #     if self.board[move[0]][move[1]].piece.isEmpty():
+            #         ratios.append((move[0],move[1]))
+            # moves = filter (lambda move : True if )
+                    
             #okay so we go through the moves
             # and at each move, 
             # if move is inside of a enemy piece, get the ratio of deltaX to deltaY and simplify it. 
             # delete any further from the origin moves with that same x:y ratio (and same sign for x and y).
-            # for move in moves:
-            #     if self.square.board[move[0]]
+            #for move in moves:
+
             print(moves)
 
 class Pawn(Piece):
@@ -134,7 +142,7 @@ class Board:
             rowStr =""
             rowStr2=""
             for row in range(0,len(self.board)):
-                print(self.board[row][col].piece.isMoveLegal(0,0))
+                # print(self.board[row][col].piece.isMoveLegal(0,0))
                 rowStr += str(self.board[row][col])
                 rowStr2+=str(row)+str(col)
                 # print(self.board[row][col].getMoves())

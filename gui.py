@@ -12,6 +12,7 @@ class Window:
         running = True
         showDebug = False
         font = pygame.font.Font('freesansbold.ttf', 20) if showDebug else pygame.font.Font('chess.ttf', 20)
+        font2 = pygame.font.Font('freesansbold.ttf', 40)
         while running:
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
@@ -41,7 +42,9 @@ class Window:
                 txtColor = "Orange"
                 if (move[0],move[1]) == pieceToTrack: txtColor = "red"
                 # print(self.board[move[0]][move[1]].piece.char)
-                text = font.render((str(move[0])+str(move[1])+str(self.board[move[0]][move[1]].piece)) if showDebug else self.board[move[0]][move[1]].piece.char , True, txtColor)
+                txtToWrite = (str(move[0])+str(move[1])+str(self.board[move[0]][move[1]].piece)) if showDebug else (self.board[move[0]][move[1]].piece.char if len(self.board[move[0]][move[1]].piece.char) > 0 else "*")
+                text = font.render(txtToWrite , True, txtColor) if txtToWrite != "*" else font2.render(txtToWrite, True, "Blue")
+                # print(txtToWrite)
                 textRect = text.get_rect()
                 textRect.center = (((move[0]) +0.5)* self.squareSize, (7-move[1]+0.5) * self.squareSize)
                 screen.blit(text,textRect)
