@@ -8,6 +8,7 @@ class Piece:
         self.hasMoved=False
         self.color=color
         self.type="empty"
+        self.val=0
     def __str__(self):
         return self.type[0:1]+self.color[0:1]
     def isEmpty(self):
@@ -32,41 +33,42 @@ class Piece:
 
             print(moves)
 
+
 class Pawn(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 1
         self.char = "o"
         self.type="pawn"
 class Knight(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 3
         self.char = "j"
         self.type="knight"
 class Rook(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 5
         self.char="t"
         self.type="rook"
 
 class Bishop(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 3
         self.char = "n"
         self.type="bishop"
 class Queen(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 9
         self.char = "w"
         self.type="queen"
 class King(Piece):
     def __init__(self,color,square=None):
-        
         super().__init__(color,square)
+        self.val = 3
         self.char = "l"
         self.type="king"
 
@@ -102,6 +104,10 @@ class Square:
     def __str__(self):
         return ((self.piece.type)[0:1] + self.piece.color[0:1] if self.piece.type != "empty" else self.color()[0:2])
 class Board:
+    def getSquareWeights(self):
+        return [[round( ((h) - ((((i - 3.5) ** 2) + ((n - 3.5) ** 2)) ** 0.33)) / 6 ,3)  for i in range(0, 8)] for n in range(0, 8)]
+    def eval(self):
+        pass
     def __init__(self,w=8,h=8):
         self.board=[]
         self.w=w
@@ -164,4 +170,4 @@ class Board:
             out+=r+'\n'
         return out
 
-# print(Board())
+print(Board().getSquareWeights())

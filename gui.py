@@ -10,8 +10,9 @@ class Window:
         screen = pygame.display.set_mode((720, 720))
         clock = pygame.time.Clock()
         running = True
-        showDebug = False
-        font = pygame.font.Font('freesansbold.ttf', 20) if showDebug else pygame.font.Font('chess.ttf', 20)
+        showDebug = True
+        showLoc = False
+        font = pygame.font.Font('freesansbold.ttf', 15) if showDebug else pygame.font.Font('chess.ttf', 20)
         font2 = pygame.font.Font('freesansbold.ttf', 40)
         while running:
             # poll for events
@@ -21,8 +22,9 @@ class Window:
                     running = False
             # fill the screen with a color to wipe away anything from last frame
             screen.fill("purple")
-            pieceToTrack = (3,0)
+            pieceToTrack = (0,1)
             # print(self.board[pieceToTrack[0]][pieceToTrack[1]].getMoves())
+            weights = board.getSquareWeights()
             for col in range(0,len(self.board[0])):
                 for row in range(0,len(self.board)):
                     # print((row,7-col))
@@ -30,7 +32,7 @@ class Window:
                     # print(txtColor)
                     if (col,row) == pieceToTrack: txtColor = "red"
                     pygame.draw.rect(screen,self.board[col][row].color(), pygame.Rect(col*self.squareSize,(7-row)*self.squareSize,self.squareSize,self.squareSize))
-                    text = font.render(str(col)+str(row)+str(self.board[col][row].piece) if showDebug else self.board[col][row].piece.char, True, txtColor)
+                    text = font.render((str(col)+str(row)+str(self.board[col][row].piece)) if showLoc else str(weights[col][row]) if showDebug else self.board[col][row].piece.char, True, txtColor)
                     textRect = text.get_rect()
                     textRect.center = (((col) +0.5)* self.squareSize, (7-row+0.5) * self.squareSize)
                     screen.blit(text,textRect)
