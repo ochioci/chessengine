@@ -104,8 +104,11 @@ class Square:
     def __str__(self):
         return ((self.piece.type)[0:1] + self.piece.color[0:1] if self.piece.type != "empty" else self.color()[0:2])
 class Board:
-    def getSquareWeights(self):
-        return [[round( ((h) - ((((i - 3.5) ** 2) + ((n - 3.5) ** 2)) ** 0.33)) / 6 ,3)  for i in range(0, 8)] for n in range(0, 8)]
+    def getEval(self):
+        z = self.getSquareWeights()
+        return round(sum([sum(z[i]) for i in range(0, len(z))]), 3)
+    def getSquareWeights(self,wClr="w"):
+        return [[round((((h) - ((((i - 3.5) ** 2) + ((n - 3.5) ** 2)) ** 0.33)) / 6) * (1 if self.board[n][i].piece.color == wClr else  -1) * self.board[n][i].piece.val ,3)   for i in range(0, 8)] for n in range(0, 8)]
     def eval(self):
         pass
     def __init__(self,w=8,h=8):
@@ -170,4 +173,4 @@ class Board:
             out+=r+'\n'
         return out
 
-print(Board().getSquareWeights())
+print(Board().getEval())
