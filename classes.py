@@ -3,6 +3,7 @@ w=8
 h=8
 class Piece:
     def __init__(self,color="empty",square=None):
+        self.dir = 1 if color=="w" else -1
         self.char = ""
         self.square = square
         self.hasMoved=False
@@ -13,34 +14,38 @@ class Piece:
         return self.type[0:1]+self.color[0:1]
     def isEmpty(self):
         return self.type == "empty"
-    def isMoveLegal(self,x,y):
-            if self.square is not None:
-                moves = self.square.getMoves()
-            else: 
-                moves=[]
-            friendly = self.color
-            # ratios = []
-            # for move in moves:
-            #     if self.board[move[0]][move[1]].piece.isEmpty():
-            #         ratios.append((move[0],move[1]))
-            # moves = filter (lambda move : True if )
-                    
-            #okay so we go through the moves
-            # and at each move, 
-            # if move is inside of a enemy piece, get the ratio of deltaX to deltaY and simplify it. 
-            # delete any further from the origin moves with that same x:y ratio (and same sign for x and y).
-            #for move in moves:
-
-            print(moves)
+    def legalMoves(self):
+        return []
 
 
-class Pawn(Piece):
+class Pawn(Piece): 
     def __init__(self,color,square=None):
         super().__init__(color,square)
         self.val = 1
         self.char = "o"
         self.type="pawn"
+    def legalMoves(self):#working
+        moves = []
+        ahead = self.square.board.squareStatus(self.square.x, self.square.y + self.dir, self.color)
+        ahead2 = self.square.board.squareStatus(self.square.x, self.square.y + self.dir + self.dir, self.color)
+        # print(ahead,ahead2)
+        diagLeft = self.square.board.squareStatus(self.square.x + 1, self.square.y + self.dir, self.color)
+        diagRight = self.square.board.squareStatus(self.square.x - 1, self.square.y + self.dir, self.color)
+        # print(diagLeft, diagRight)
+        if ahead == 0: #empty
+            moves.append((self.square.x, self.square.y+self.dir))
+            if (not self.hasMoved and ahead2 != 1):
+                moves.append((self.square.x, self.square.y + (2 * self.dir)))
+        if diagRight == 2: #enemy piece
+            moves.append((self.square.x-1, self.square.y + self.dir))
+        if diagLeft == 2: #enemy piece
+            moves.append((self.square.x+1, self.square.y + self.dir))
+        moves = filter((lambda move : not (move[0] >= w or move[1] >= h or move[0] < 0 or move[1] < 0)),moves)
+        return list(moves)
 class Knight(Piece):
+    def legalMoves(self):
+        moves = filter(lambda move: self.square.board.squareStatus(move[0],move[1],self.color) != 1, self.square.getMoves())
+        return list(moves)
     def __init__(self,color,square=None):
         super().__init__(color,square)
         self.val = 3
@@ -104,6 +109,16 @@ class Square:
     def __str__(self):
         return ((self.piece.type)[0:1] + self.piece.color[0:1] if self.piece.type != "empty" else self.color()[0:2])
 class Board:
+    def movePiece(self,x1,y1,x2,y2):
+        temp = self.board[x1][y1].piece
+        self.board[x1][y1].piece = Piece(square=self.board[x1][y1])
+        self.board[x2][y2].piece = temp
+    def squareStatus(self,x,y,clr="w"):
+        # print(x,y, self.board[x][y].piece.color) 
+        # print()
+        if self.board[x][y].piece.color == clr: return 1 #friendly piece
+        elif self.board[x][y].piece.color == "empty": return 0
+        else: return 2
     def getEval(self):
         z = self.getSquareWeights()
         return round(sum([sum(z[i]) for i in range(0, len(z))]), 3)
@@ -120,11 +135,12 @@ class Board:
             col = []
             for y in range(0,h):
                 clr = ((x+y)%2)+1
-                piece = Piece("") 
+                piece = Piece(color="empty") 
                 sq = Square(self,x,y,clr,piece)
                 match y:
                     case Codes.wPawn|Codes.bPawn:
                         piece=Pawn("w" if y==Codes.wPawn else "b",sq)
+                        pass
                     case Codes.wPieces|Codes.bPieces:
                         match x:
                             case Codes.lRook|Codes.rRook:
@@ -173,4 +189,6 @@ class Board:
             out+=r+'\n'
         return out
 
-print(Board().getEval())
+# myBoard = Board()
+# print("legal moves:")
+# print(myBoard.board[0][0].piece.getLegalMoves())
