@@ -109,31 +109,31 @@ class Rook(Piece):
 
 
 class Bishop(Piece):
-    def legalMoves(self):#1 is friendly 2 is enemy
+    def legalMoves(self):#square status 0 is empty 1 is friendly 2 is enemy
         moves = []
         lx,ly = self.square.x, self.square.y
         for a in range(1,8-max(lx,ly)):
-            st = self.square.board.squareStatus(lx+a, ly+a)
+            st = self.square.board.squareStatus(lx+a, ly+a, self.color)
             if st != 1:
                 moves.append(((lx+a),(ly+a)))
             if st != 0:
                 break
         for a in range(1,8-max(7-lx,ly)):
-            st = self.square.board.squareStatus(lx-a, ly+a)
+            st = self.square.board.squareStatus(lx-a, ly+a, self.color)
             if st != 1:
                 moves.append(((lx-a),(ly+a)))
             if st != 0:
                 break
 
         for a in range(1, min(lx,ly)+1):
-            st = self.square.board.squareStatus(lx-a, ly-a)
+            st = self.square.board.squareStatus(lx-a, ly-a, self.color)
             if st != 1:
                 moves.append(((lx-a),(ly-a)))
             if st != 0:
                 break
 
         for a in range(1, min(7-lx,ly)+1):
-            st = self.square.board.squareStatus(lx+a, ly-a)
+            st = self.square.board.squareStatus(lx+a, ly-a, self.color)
             if st != 1:
                 moves.append(((lx+a),(ly-a)))
             if st != 0:
@@ -155,27 +155,27 @@ class Queen(Piece):
         moves = []
         lx, ly = self.square.x, self.square.y
         for a in range(1, 8 - max(lx, ly)):
-            st = self.square.board.squareStatus(lx + a, ly + a)
+            st = self.square.board.squareStatus(lx + a, ly + a, self.color)
             if st != 1:
                 moves.append(((lx + a), (ly + a)))
             if st != 0:
                 break
         for a in range(1, 8 - max(7 - lx, ly)):
-            st = self.square.board.squareStatus(lx - a, ly + a)
+            st = self.square.board.squareStatus(lx - a, ly + a, self.color)
             if st != 1:
                 moves.append(((lx - a), (ly + a)))
             if st != 0:
                 break
 
         for a in range(1, min(lx, ly) + 1):
-            st = self.square.board.squareStatus(lx - a, ly - a)
+            st = self.square.board.squareStatus(lx - a, ly - a, self.color)
             if st != 1:
                 moves.append(((lx - a), (ly - a)))
             if st != 0:
                 break
 
         for a in range(1, min(7 - lx, ly) + 1):
-            st = self.square.board.squareStatus(lx + a, ly - a)
+            st = self.square.board.squareStatus(lx + a, ly - a, self.color)
             if st != 1:
                 moves.append(((lx + a), (ly - a)))
             if st != 0:
