@@ -33,20 +33,27 @@ class Pawn(Piece):
 
     def legalMoves(self):  # working
         moves = []
-        ahead = self.square.board.squareStatus(self.square.x, self.square.y + self.dir, self.color)
-        ahead2 = self.square.board.squareStatus(self.square.x, self.square.y + self.dir + self.dir, self.color)
+        if (self.square.y + self.dir) in range(0,8):
+            ahead = self.square.board.squareStatus(self.square.x, self.square.y + self.dir, self.color)
+            if self.square.x < 7:
+                diagLeft = self.square.board.squareStatus(self.square.x + 1, self.square.y + self.dir, self.color)
+                if diagLeft == 2:  # enemy piece
+                    moves.append((self.square.x + 1, self.square.y + self.dir))
+            if self.square.x > 0:
+                diagRight = self.square.board.squareStatus(self.square.x - 1, self.square.y + self.dir, self.color)
+                if diagRight == 2:  # enemy piece
+                    moves.append((self.square.x - 1, self.square.y + self.dir))
+            if (self.square.y + self.dir + self.dir) in range(0,8): ahead2 = self.square.board.squareStatus(self.square.x, self.square.y + self.dir + self.dir, self.color)
+            if ahead == 0:  # empty
+                moves.append((self.square.x, self.square.y + self.dir))
+                if (not self.hasMoved and ahead2 != 1):
+                    moves.append((self.square.x, self.square.y + (2 * self.dir)))
+
+
         # print(ahead,ahead2)
-        diagLeft = self.square.board.squareStatus(self.square.x + 1, self.square.y + self.dir, self.color)
-        diagRight = self.square.board.squareStatus(self.square.x - 1, self.square.y + self.dir, self.color)
+
         # print(diagLeft, diagRight)
-        if ahead == 0:  # empty
-            moves.append((self.square.x, self.square.y + self.dir))
-            if (not self.hasMoved and ahead2 != 1):
-                moves.append((self.square.x, self.square.y + (2 * self.dir)))
-        if diagRight == 2:  # enemy piece
-            moves.append((self.square.x - 1, self.square.y + self.dir))
-        if diagLeft == 2:  # enemy piece
-            moves.append((self.square.x + 1, self.square.y + self.dir))
+
         moves = filter((lambda move: not (move[0] >= w or move[1] >= h or move[0] < 0 or move[1] < 0)), moves)
         return list(moves)
 
@@ -131,30 +138,7 @@ class Bishop(Piece):
                 moves.append(((lx+a),(ly-a)))
             if st != 0:
                 break
-        for i in range(0, ly)[::-1]:
-            st = self.square.board.squareStatus(lx, i, self.color)
-            if st != 1:
-                moves.append((lx, i))
-            if st != 0:
-                break
-        for i in range(ly + 1, 8):
-            st = self.square.board.squareStatus(lx, i, self.color)
-            if st != 1:
-                moves.append((lx, i))
-            if st != 0:
-                break
-        for i in range(0, lx)[::-1]:
-            st = self.square.board.squareStatus(i, ly, self.color)
-            if st != 1:
-                moves.append((i, ly))
-            if st != 0:
-                break
-        for i in range(lx + 1, 8):
-            st = self.square.board.squareStatus(i, ly, self.color)
-            if st != 1:
-                moves.append((i, ly))
-            if st != 0:
-                break
+
         return moves
 
 
@@ -194,6 +178,30 @@ class Queen(Piece):
             st = self.square.board.squareStatus(lx + a, ly - a)
             if st != 1:
                 moves.append(((lx + a), (ly - a)))
+            if st != 0:
+                break
+        for i in range(0, ly)[::-1]:
+            st = self.square.board.squareStatus(lx, i, self.color)
+            if st != 1:
+                moves.append((lx, i))
+            if st != 0:
+                break
+        for i in range(ly + 1, 8):
+            st = self.square.board.squareStatus(lx, i, self.color)
+            if st != 1:
+                moves.append((lx, i))
+            if st != 0:
+                break
+        for i in range(0, lx)[::-1]:
+            st = self.square.board.squareStatus(i, ly, self.color)
+            if st != 1:
+                moves.append((i, ly))
+            if st != 0:
+                break
+        for i in range(lx + 1, 8):
+            st = self.square.board.squareStatus(i, ly, self.color)
+            if st != 1:
+                moves.append((i, ly))
             if st != 0:
                 break
         # print(lx, ly, moves)
@@ -260,6 +268,7 @@ class Square:
 class Board:
     def movePiece(self, x1, y1, x2, y2):
         temp = self.board[x1][y1].piece
+        temp.hasMoved = True
         temp.square = self.board[x2][y2]
         self.board[x1][y1].piece = Piece(square=self.board[x1][y1])
         self.board[x2][y2].piece = temp

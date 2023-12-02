@@ -24,10 +24,13 @@ class Window:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     xc,yc = pygame.mouse.get_pos()
-                    xc = xc // squareSize
-                    yc = 7-(yc // squareSize)
+                    xc = min(7,max(xc // squareSize,0))
+                    yc = min(7,max(7-(yc // squareSize),0))
                     lastClicked = clicked
                     clicked = (xc, yc)
+                    if clicked in self.board[lastClicked[0]][lastClicked[1]].piece.legalMoves():
+                        board.movePiece(*lastClicked,*clicked)
+                        clicked,lastClicked = (-1,0),(-1,0)
                     # print(self.board[xc][yc].isEmpty())
                     if lastClicked == clicked:
                         clicked, lastClicked = (-1,0),(-1,0)
@@ -56,7 +59,7 @@ class Window:
                 moves = self.board[clicked[0]][clicked[1]].piece.legalMoves()
                 for move in moves:
                     txtColor = "Orange"
-                    if (move[0],move[1]) == self.pieceToTrack: txtColor = "red"
+                    # if (move[0],move[1]) == self.pieceToTrack: txtColor = "red"
                     # print(self.board[move[0]][move[1]].piece.char)
                     txtToWrite = (str(move[0])+str(move[1])+str(self.board[move[0]][move[1]].piece)) if showDebug else (self.board[move[0]][move[1]].piece.char if len(self.board[move[0]][move[1]].piece.char) > 0 else "*")
                     text = font.render(txtToWrite , True, txtColor) if txtToWrite != "*" else font2.render(txtToWrite, True, "Blue")
@@ -76,14 +79,14 @@ class Window:
         pygame.quit()
     def quit(self):
         pygame.quit()
-myBoard = Board(buildPawns=False)
+myBoard = Board()
 x1,y1=3,3
 # print("moves:")
 # print(myBoard.board[x1][y1].getMoves())
 # print("legal moves")
-myBoard.movePiece(0,0,3,3)
+# myBoard.movePiece(0,0,3,3)
 # myBoard.movePiece(2,6,2,2)
 a = myBoard.board[x1][y1].piece.legalMoves()
 print("legal moves")
 print(a)
-game = Window(myBoard,pieceToTrack=(x1,y1))
+game = Window(myBoard)
