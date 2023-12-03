@@ -1,3 +1,4 @@
+import io
 print("imported classes")
 w = 8
 h = 8
@@ -363,7 +364,321 @@ class Board:
                 r += str(n)
             out += r + '\n'
         return out
+    def convToStr(self):
+        curBoard = self.board
+        newBoard = [['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em'],
+                    ['em','em','em','em','em','em','em','em']]
+        
+        for r in range(8):
+            for c in range(8):
+                sq = curBoard[r][c]
+                if sq.isEmpty() == False:
+                    if sq.piece.color == "w":
+                        if sq.piece.type == "knight":
+                            newBoard[r][c] = "bn"
+                        else:
+                            newBoard[r][c] = "b"+sq.piece.type[0]
+                    else:
+                        if sq.piece.type == "knight":
+                            newBoard[r][c] = "wn"
+                        else:
+                            newBoard[r][c] = "w"+sq.piece.type[0]
 
-# myBoard = Board()
+        #newBoard = list(zip(newBoard))[::-1]
+        return newBoard
+
+    """def rotate(self, arr):
+        r, c = len(arr), len(arr[0])
+        newArr = [[None] * r for _ in range(c)]
+        for col in range(c):
+            for row in range(r-1, -1, -1):
+                newArr[col-c-1][row] = arr[row][col]
+        return newArr"""
+    def transpose(self, A, N):
+        newA = A
+        for i in range(N):
+            for j in range(i+1, N):
+                newA[i][j], newA[j][i] = newA[j][i], newA[i][j]
+        return newA
+        
+    def fen(self):
+        curBoard = self.board
+        strBoard = self.transpose(self.convToStr(), 8)
+        # Use StringIO to build string more efficiently than concatenating
+        with io.StringIO() as s:
+            for row in strBoard:
+                empty = 0
+                for cell in row:
+                    c = cell[0]
+                    if c in ('w', 'b'):
+                        if empty > 0:
+                            s.write(str(empty))
+                            empty = 0
+                        s.write(cell[1].upper() if c == 'w' else cell[1].lower())
+                    else:
+                        empty += 1
+                if empty > 0:
+                    s.write(str(empty))
+                s.write('/')
+            # Move one position back to overwrite last '/'
+            s.seek(s.tell() - 1)
+            # If you do not have the additional information choose what to put
+            s.write(' w KQkq - 0 1')
+            return s.getvalue()
+
+
+
+
+
+myBoard = Board()
 # print("legal moves:")
 # print(myBoard.board[0][0].piece.getLegalMoves())
+print(myBoard.convToStr())
+print(myBoard.transpose(myBoard.convToStr(), 8))
+print(myBoard.fen())
+
+class BoardValues:
+    def __init__(self):
+        self.Pawn = [0,  0,   0,   0,   0,   0,  0, 0,
+                     5, 10,  10, -20, -20,  10, 10, 5,
+                     5, -5, -10,   0,   0, -10, -5, 5,
+                     0,  0,   0,  20,  20,   0,  0, 0,
+                     5,  5,  10,  25,  25,  10,  5, 5,
+                     10,10,  20,  30,  30,  20, 10,10,
+                     50,50,  50,  50,  50,  50, 50,50,
+                     0,  0,  0,    0,   0,   0,  0, 0
+                     ]
+
+        self.Knight = [-50, -40, -30, -30, -30, -30, -40, -50,
+                       -40, -20,   0,   0,   0,   0, -20, -40,
+                       -30,   5,  10,  15,  15,  10,   5, -30,
+                       -30,   0,  15,  20,  20,  15,   0, -30,
+                       -30,   5,  15,  20,  20,  15,   5, -30,
+                       -30,   0,  10,  15,  15,  10,   0, -30,
+                       -40, -20,   0,   5,   5,   0, -20, -40,
+                       -50, -40, -30, -30, -30, -30, -40, -50
+                       ]
+
+        self.Bishop = [-20,-10,-10,-10,-10,-10,-10,-20,
+                       -10,  5,  0,  0,  0,  0,  5,-10,
+                       -10, 10, 10, 10, 10, 10, 10,-10,
+                       -10,  0, 10, 10, 10, 10,  0,-10,
+                       -10,  5,  5, 10, 10,  5,  5,-10,
+                       -10,  0,  5, 10, 10,  5,  0,-10,
+                       -10,  0,  0,  0,  0,  0,  0,-10,
+                       -20,-10,-10,-10,-10,-10,-10,-20
+                       ]
+
+        self.Rook = [ 0, 0,  0,  5,  5,  0,  0,  0,
+                     -5, 0,  0,  0,  0,  0,  0, -5,
+                     -5, 0,  0,  0,  0,  0,  0, -5,
+                     -5, 0,  0,  0,  0,  0,  0, -5,
+                     -5, 0,  0,  0,  0,  0,  0, -5,
+                     -5, 0,  0,  0,  0,  0,  0, -5,
+                      5,10, 10, 10, 10, 10, 10,  5,
+                      0, 0,  0,  0,  0,  0,  0,  0
+                     ]
+
+        self.Queen = [-10,   5,   5,  5,  5,   5,   0, -10,
+                      -10,   0,   5,  0,  0,   0,   0, -10,
+                        0,   0,   5,  5,  5,   5,   0,  -5,
+                       -5,   0,   5,  5,  5,   5,   0,  -5,
+                      -10,   0,   0,  0,  0,   0,   0, -10,
+                      -10,   0,   5,  5,  5,   5,   0, -10,
+                      -20, -10, -10, -5, -5, -10, -10, -20,
+                      -20, -10, -10, -5, -5, -10, -10, -20
+                      ]
+
+        self.KingEarly = [ 20,  30,  10,   0,   0,  10,  30,  20,
+                           20,  20,   0,   0,   0,   0,  20,  20,
+                          -10, -20, -20, -20, -20, -20, -20, -10,
+                          -20, -30, -30, -40, -40, -30, -30, -20,
+                          -30, -40, -40, -50, -50, -40, -40, -30,
+                          -30, -40, -40, -50, -50, -40, -40, -30,
+                          -30, -40, -40, -50, -50, -40, -40, -30,
+                          -30, -40, -40, -50, -50, -40, -40, -30
+                          ]
+
+        self.KingLate = [-50, -30,-30,-30,-30,-30, -30, -50,
+                         -30, -30,  0,  0,  0,  0, -30, -30,
+                         -30, -10, 20, 30, 30, 20, -10, -30,
+                         -30, -10, 30, 40, 40, 30, -10, -30,
+                         -30, -10, 30, 40, 40, 30, -10, -30,
+                         -30, -10, 20, 30, 30, 20, -10, -30,
+                         -30, -20,-10,  0,  0,-10, -20, -30,
+                         -50, -40,-30,-20,-20,-30, -40, -50
+                         ]
+        
+
+class Eval():
+
+    def __init__(self, board, color):
+        self.board = board
+        self.color = color
+        self.boardValues = BoardValues()
+        self.lateGameWhite = False
+        self.lateGameBlack = False
+
+        #Cretes empty BoardLayout list from where comparisons can be made.
+        self.boardLayout = [None] * 64
+
+        # Actually populate boardLayout with data from boardString.
+        self.populate()
+
+    def populate(self):
+
+        boardString = self.board.fen()
+
+        # Gets rid of unnecessary data at end of string
+        boardString = boardString[0:boardString.find(' ')]
+        boardString = boardString + '/'
+
+        # Basic String manipulation to determine where every piece on the board should be positioned
+        counter = 0
+
+        for y in range(8):
+            dash = boardString.find('/')
+            rawCode = boardString[0:dash]
+            boardString = boardString[dash + 1:len(boardString)]
+
+            for char in rawCode:
+                if char.isdigit():
+                    counter += int(char)
+                else:
+                    self.boardLayout[counter] = char
+                    counter += 1
+
+    def materialComp(self):
+
+        total = 0
+        boardString = self.board.fen()
+
+        # Gets rid of unnecessary data at end of string
+        boardString = boardString[0:boardString.find(' ')]
+
+        # Basic String manipulation to determine where every piece on the board should be positioned
+        for i in boardString:
+            if str(i) == "P": total += 100
+            elif str(i) == "N": total += 320
+            elif str(i) == "B": total += 330
+            elif str(i) == "R": total += 500
+            elif str(i) == "Q": total += 900
+            elif str(i) == "K": total += 20000
+
+            elif str(i) == "p": total -= 100
+            elif str(i) == "n": total -= 320
+            elif str(i) == "b": total -= 330
+            elif str(i) == "r": total -= 500
+            elif str(i) == "q": total -= 900
+            elif str(i) == "k": total -= 20000
+            else: pass
+
+        return total
+
+    def development(self):
+        total = 0
+        counter = 0
+        # GamePos determines whether it is early or late game that determines how aggressive the king should be.
+        # 1 Means it is Late game and 0 it is Early to mid Game.
+
+        numberOfMinorPiecesWhite = 0
+        numberOfMinorPiecesBlack = 0
+
+        for piece in self.boardLayout:
+            if piece != None:
+                if str(piece) == "P":
+                    total += self.boardValues.Pawn[-(counter-63)]
+                elif str(piece) == "N":
+                    total += self.boardValues.Knight[-(counter-63)]
+                    numberOfMinorPiecesWhite += 1
+                elif str(piece) == "B":
+                    total += self.boardValues.Bishop[-(counter-63)]
+                    numberOfMinorPiecesWhite += 1
+                elif str(piece) == "R":
+                    total += self.boardValues.Rook[-(counter-63)]
+                    numberOfMinorPiecesWhite += 1
+                elif str(piece) == "Q":
+                    total += self.boardValues.Queen[-(counter-63)]
+                    numberOfMinorPiecesWhite += 1
+
+                #######################################################################
+
+                elif str(piece) == "p":
+                    total -= self.boardValues.Pawn[counter]
+                elif str(piece) == "n":
+                    total += self.boardValues.Knight[counter]
+                    numberOfMinorPiecesBlack += 1
+                elif str(piece) == "b":
+                    total += self.boardValues.Bishop[counter]
+                    numberOfMinorPiecesBlack += 1
+                elif str(piece) == "r":
+                    total += self.boardValues.Rook[counter]
+                    numberOfMinorPiecesBlack += 1
+                elif str(piece) == "q":
+                    total += self.boardValues.Queen[counter]
+                    numberOfMinorPiecesBlack += 1
+
+            counter += 1
+
+        counter = 0
+        for piece in self.boardLayout:
+            if piece != None:
+                # If True it is still early game.
+                if str(piece) == "k":
+                    if (numberOfMinorPiecesBlack >= 3):
+                        total += self.boardValues.KingEarly[counter]
+                    else:
+                        total += self.boardValues.KingLate[counter]
+                        self.lateGameBlack = True
+                        print("Black LAte")
+
+                # If True it is still early game.
+                elif str(piece) == "K":
+                    if (numberOfMinorPiecesWhite >= 3):
+                        total += self.boardValues.KingEarly[-(counter - 63)]
+                    else:
+                        total += self.boardValues.KingLate[-(counter - 63)]
+                        self.lateGameWhite = True
+
+            counter += 1
+
+        return total
+
+    def checkmate(self):
+
+        total = 0
+
+        if self.board.is_checkmate:
+            if self.color == "W":
+                total += 50000
+            else:
+                total -= 50000
+
+        return total
+
+    def is_late_game(self):
+        self.development()
+        if (self.lateGameBlack) and (self.lateGameWhite):
+            return True
+        else:
+            return False
+
+    def result(self):
+        total = 0
+
+        #1 Material Comp gives int val to board acording to what pieces is still on the board
+        total += self.materialComp()
+
+        #2 Develompent gives int val to board acording to where on board pieces is located uses Piece_Development_Values.py
+        total += self.development()
+
+        #3 Gives int value if the current move could put the opposite player in checkmate
+        total += self.checkmate()
+
+        return total
