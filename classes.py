@@ -216,6 +216,19 @@ class Queen(Piece):
 
 
 class King(Piece):
+    def legalMoves(self):
+        moves = []
+        for lx in range(self.square.x-1,self.square.x+2):
+            for ly in range(self.square.y-1,self.square.y+2):
+                if lx < 0 or ly < 0 or (lx == self.square.x and ly == self.square.y):
+                    continue
+                st = self.square.board.squareStatus(lx, ly, self.color)
+                if st != 1:
+                    moves.append((lx, ly))
+                if st != 0:
+                    break
+        return moves
+    
     def __init__(self, color, square=None):
         super().__init__(color, square)
         self.val = 3
