@@ -4,7 +4,6 @@ import pygame
 print("imported gui")
 
 
-# images file is required for this function
 def drawInterface(screen, squareSize, board):
     IMAGES = {}
     images = ['wp', 'wr', 'wn', 'wb', 'wk', 'wq', 'bp', 'br', 'bn', 'bb', 'bk', 'bq', 'wBoard', 'bBoard']
@@ -31,13 +30,40 @@ class Window:
         screen = pygame.display.set_mode((720, 720))
         clock = pygame.time.Clock()
         running = True
-        showSurfaceImage = True
+        showInterface = False
+        showSurfaceImage = False
         showDebug = True
         showLoc = True
         font = pygame.font.Font('freesansbold.ttf', 15) if showDebug else pygame.font.Font('chess.ttf', 20)
         font2 = pygame.font.Font('freesansbold.ttf', 40)
         clicked = (-1, 0)
         lastClicked = (-1, 0)
+
+        '''Interface part'''
+        if showInterface:
+            dark = pygame.image.load("images/bButton.png")
+            bright = pygame.image.load("images/wButton.png")
+            screen.fill((237,213,193))
+        while showInterface:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    showInterface = False
+                xc, yc = pygame.mouse.get_pos()
+                if xc in range(240,480) and yc in range(320,380) :
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        screen.blit(dark, pygame.Rect((720 - 300) / 2, (720 - 300) / 2, squareSize, squareSize))
+                        pygame.display.flip()
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        pygame.time.delay(50)
+                        screen.blit(bright, pygame.Rect(210, 210, squareSize, squareSize))
+                        pygame.time.delay(50)
+                        showInterface = False
+                else:
+                    screen.blit(bright, pygame.Rect(210, 210, squareSize, squareSize))
+            pygame.display.flip()
+
+
+
         while running:
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
@@ -79,7 +105,7 @@ class Window:
                     textRect.center = (((col) + 0.5) * self.squareSize, (7 - row + 0.5) * self.squareSize)
                     screen.blit(text, textRect)
 
-            drawInterface(screen, self.squareSize, self.board)
+            if showSurfaceImage: drawInterface(screen, self.squareSize, self.board)
 
             if clicked[0] > -1:
                 moves = self.board[clicked[0]][clicked[1]].piece.legalMoves()
