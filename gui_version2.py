@@ -4,6 +4,7 @@ import pygame
 print("imported gui")
 
 
+# images file is required for this function
 def drawInterface(screen, squareSize, board):
     IMAGES = {}
     images = ['wp', 'wr', 'wn', 'wb', 'wk', 'wq', 'bp', 'br', 'bn', 'bb', 'bk', 'bq', 'wBoard', 'bBoard']
