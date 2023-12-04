@@ -220,7 +220,6 @@ class King(Piece):
         moves = []
         for lx in range(self.square.x - 1, self.square.x + 2):
             for ly in range(self.square.y - 1, self.square.y + 2):
-                print(ly)
                 if 0 > lx or lx > 7 or 0 > ly or ly > 7 or (lx == self.square.x and ly == self.square.y):
                     continue
                 st = self.square.board.squareStatus(lx, ly, self.color)
