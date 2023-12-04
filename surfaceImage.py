@@ -3,16 +3,16 @@ def drawInterface(screen, squareSize, board):
     images = ['wp', 'wr', 'wn', 'wb', 'wk', 'wq', 'bp', 'br', 'bn', 'bb', 'bk', 'bq', 'wBoard', 'bBoard']
     for image in images:
         IMAGES[image] = pygame.transform.scale(pygame.image.load("images/" + image + ".png"),(squareSize, squareSize))
-    for r in range(8):
-        for c in range(8):
+    for r in range(DIMENSION):
+        for c in range(DIMENSION):
             if (c + r) % 2 == 0:
-                screen.blit(IMAGES['bBoard'], pygame.Rect(r * squareSize, (7 - c) * squareSize, squareSize, squareSize))
+                screen.blit(IMAGES['bBoard'], pygame.Rect(r * SQ_SIZE, (7 - c) * SQ_SIZE, SQ_SIZE, SQ_SIZE))
             else:
-                screen.blit(IMAGES['wBoard'], pygame.Rect(r * squareSize, (7 - c) * squareSize, squareSize, squareSize))
-
+                screen.blit(IMAGES['wBoard'], pygame.Rect(r * SQ_SIZE, (7 - c) * SQ_SIZE, SQ_SIZE, SQ_SIZE))
             image = str(board[r][c].piece)[::-1]
+            if board[r][c].piece.type == "knight": image = image.replace("k","n")
             if image != "ee":
-                screen.blit(IMAGES[image], pygame.Rect(r * squareSize, (7 - c) * squareSize, squareSize, squareSize))
+                screen.blit(IMAGES[image], pygame.Rect(r * SQ_SIZE, (7 - c) * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 
 
