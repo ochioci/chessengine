@@ -30,8 +30,8 @@ class Window:
         screen = pygame.display.set_mode((720, 720))
         clock = pygame.time.Clock()
         running = True
-        showInterface = False
-        showSurfaceImage = False
+        showInterface = True
+        showSurfaceImage = True
         showDebug = True
         showLoc = True
         font = pygame.font.Font('freesansbold.ttf', 15) if showDebug else pygame.font.Font('chess.ttf', 20)
@@ -39,7 +39,7 @@ class Window:
         clicked = (-1, 0)
         lastClicked = (-1, 0)
 
-        '''Interface part'''
+        '''Interface part: controled by showInterface (bool)'''
         if showInterface:
             dark = pygame.image.load("images/bButton.png")
             bright = pygame.image.load("images/wButton.png")
