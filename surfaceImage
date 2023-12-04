@@ -14,5 +14,12 @@ def drawInterface(screen, squareSize, board):
             if image != "ee":
                 screen.blit(IMAGES[image], pygame.Rect(r * squareSize, (7 - c) * squareSize, squareSize, squareSize))
 
-#insert this into the middle of the while loop 
-drawInterface(screen, self.squareSize, self.board)
+
+
+
+
+surfaceImage = True
+
+# insert this into the middle of the while loop 
+if sufaceImage:
+    drawInterface(screen, self.squareSize, self.board)
